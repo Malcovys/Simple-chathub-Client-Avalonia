@@ -2,11 +2,36 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Client.LoginPage">
 
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="Login" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" />
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="350">
+        <TextBlock Text="Login" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
+        
+        <!-- Error Message -->
+        <TextBlock x:Name="ErrorMessage" 
+                   Foreground="Red" 
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"
+                   IsVisible="False" />
+        
+        <!-- Success Message -->
+        <TextBlock x:Name="SuccessMessage" 
+                   Foreground="Green" 
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"
+                   IsVisible="False" />
+        
+        <!-- Username Input -->
         <TextBox x:Name="UsernameInput" Width="300" Margin="0,0,0,10" Watermark="Username" />
+        
+        <!-- Password Input -->
         <TextBox PasswordChar="*" x:Name="PasswordInput" Width="300" Margin="0,0,0,20" Watermark="Password" />
-        <Button Content="Login" Width="100" Click="LoginButton_Click" />
+        
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+            <Button Content="Login" Width="140" Click="LoginButton_Click" />
+            <Button Content="Register" Width="140" Click="RegisterButton_Click" />
+        </StackPanel>
     </StackPanel>
     
 </UserControl>
