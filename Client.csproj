@@ -20,4 +20,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.10" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="LoginPage.axaml" />
+    <Page Include="ChatPage.axaml" />
+  </ItemGroup>
 </Project>
