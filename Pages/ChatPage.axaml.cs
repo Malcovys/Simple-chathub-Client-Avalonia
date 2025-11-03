@@ -10,7 +10,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Client;
+namespace Client.Pages;
 
 public partial class ChatPage : UserControl
 {  
@@ -40,9 +40,13 @@ public partial class ChatPage : UserControl
     {
         try
         {
-            InitializeWebSocketConnection();
-            await LoadConnectedUsers();
             await LoadOldMessages();
+            
+            await LoadConnectedUsers();
+            
+            InitializeWebSocketConnection();
+            
+            Dispatcher.UIThread.Post(() => PushNotification("You are online."));
         }
         catch (Exception ex)
         {
@@ -60,23 +64,51 @@ public partial class ChatPage : UserControl
     private async Task LoadOldMessages()
     {
         await GetAllFromJsonMessages();
-        PushNotification("You are online.");
     }
 
     private void PushMessage(Message message)
     {
-        var displayName =  message.Username;
-        Dispatcher.UIThread.Post(() => MessagesList.Items.Add($"{displayName}: {message.Content}."));
+        if(message.UserId == _userId)
+        {
+            PushCurrentUserMessage(message.Content);
+            return;
+        }
+        var displayName = message.Username;
+        Dispatcher.UIThread.Post(() => 
+        {
+            MessagesList.Items.Add($"{displayName}: {message.Content}");
+            // Auto-scroll
+            if (MessagesList.ItemCount > 0)
+            {
+                MessagesList.ScrollIntoView(MessagesList.ItemCount - 1);
+            }
+        });
     }
 
     private void PushCurrentUserMessage(string content)
     {
-        MessagesList.Items.Add($"You: {content}.");
+        Dispatcher.UIThread.Post(() => 
+        {
+            MessagesList.Items.Add($"You: {content}");
+            // Auto-scroll
+            if (MessagesList.ItemCount > 0)
+            {
+                MessagesList.ScrollIntoView(MessagesList.ItemCount - 1);
+            }
+        });
     }
 
     private void PushNotification(string notification)
     {
-        MessagesList.Items.Add(notification);
+        Dispatcher.UIThread.Post(() => 
+        {
+            MessagesList.Items.Add(notification);
+            // Auto-scroll
+            if (MessagesList.ItemCount > 0)
+            {
+                MessagesList.ScrollIntoView(MessagesList.ItemCount - 1);
+            }
+        });
     }
 
     private void PushConnectedUser(User user)
@@ -148,16 +180,18 @@ public partial class ChatPage : UserControl
     private async Task GetAllFromJsonMessages()
     {
         var messages = await _httpClient.GetFromJsonAsync<List<Message>>("messages");
-        messages?.ForEach(_messages.Add);
-
-        if (messages != null && messages.Count > 0)
-        {   
-            foreach (var message in messages)
-            {
-                var sender = message.Username; 
-                MessagesList.Items.Add($"{sender}: {message.Content}.");
-            }
+        messages?.ForEach((msg) =>
+        {
+            _messages.Add(msg);
+            PushMessage(msg);
+        });
+        
+        Dispatcher.UIThread.Post(() => {
+        if (MessagesList.ItemCount > 0)
+        {
+            MessagesList.ScrollIntoView(MessagesList.ItemCount - 1);
         }
+    });
     }
 
     private async Task GetAllFromJsonConnectedUsers()

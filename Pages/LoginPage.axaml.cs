@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Client;
+namespace Client.Pages;
 
 public partial class LoginPage : UserControl
 {

@@ -1,13 +1,5 @@
-using System;
 using Avalonia.Controls;
-using Avalonia.Threading;
-using Avalonia.Interactivity;
-using Microsoft.AspNetCore.SignalR.Client;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Json;
-using System.Collections.Generic;
+using Client.Pages;
 
 namespace Client;
 
@@ -17,8 +9,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        // Subscribe to login event
-        LoginPage.LoginSuccess += OnLoginSuccess;
+        // Subscribe to login event using the instance from XAML
+        var loginPage = this.FindControl<LoginPage>("LoginPage");
+        if (loginPage != null)
+        {
+            loginPage.LoginSuccess += OnLoginSuccess;
+        }
     }
 
     private void OnLoginSuccess(object? sender, LoginPage.LoginSuccessEventArgs e)
@@ -27,8 +23,14 @@ public partial class MainWindow : Window
         var chatPage = new ChatPage(e.UserId, e.Username);
         
         // Hide login and show chat
-        LoginPage.IsVisible = false;
-        ChatPageContainer.Content = chatPage;
-        ChatPageContainer.IsVisible = true;
+        var loginPage = this.FindControl<LoginPage>("LoginPage");
+        var chatPageContainer = this.FindControl<ContentControl>("ChatPageContainer");
+        
+        if (loginPage != null && chatPageContainer != null)
+        {
+            loginPage.IsVisible = false;
+            chatPageContainer.Content = chatPage;
+            chatPageContainer.IsVisible = true;
+        }
     }
 }

@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Client"
+        xmlns:pages="clr-namespace:Client.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Client.MainWindow"
         Title="ChatHub">
@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
 
         <!-- Login Page -->
-        <local:LoginPage x:Name="LoginPage" IsVisible="True" />
+        <pages:LoginPage x:Name="LoginPage" IsVisible="True" />
 
         <!-- Chat Page Container -->
         <ContentControl x:Name="ChatPageContainer" IsVisible="False" />
