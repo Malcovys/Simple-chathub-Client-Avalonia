@@ -25,4 +25,8 @@
     <Page Include="LoginPage.axaml" />
     <Page Include="ChatPage.axaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages/" />
+  </ItemGroup>
 </Project>
