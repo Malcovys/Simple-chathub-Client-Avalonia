@@ -8,7 +8,7 @@ A Simple real-time chat application client built with Avalonia UI and SignalR.
 - **Real-time Messaging**: Send and receive messages instantly using SignalR
 - **User Presence**: See who's online and get notified when users connect/disconnect
 - **Message History**: View previous messages when joining the chat
-- **Cross-platform**: Works on Windows, Linux, and macOS
+- **Cross-platform**: Works on Windows and Linux
 
 ## 📋 Prerequisites
 
@@ -44,6 +44,83 @@ A Simple real-time chat application client built with Avalonia UI and SignalR.
    dotnet run
    ```
 
+## 📦 Building Executables
+
+### For Linux (64-bit)
+
+**Self-contained executable** (includes .NET runtime, larger file):
+```bash
+dotnet publish -c Release -r linux-x64 --self-contained
+```
+
+**Single-file executable**:
+```bash
+dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true
+```
+
+**Framework-dependent** (requires .NET 9.0 installed, smaller file):
+```bash
+dotnet publish -c Release -r linux-x64 --no-self-contained
+```
+
+📁 Output location: `bin/Release/net9.0/linux-x64/publish/Client`
+
+**Make executable and run**:
+```bash
+chmod +x bin/Release/net9.0/linux-x64/publish/Client
+./bin/Release/net9.0/linux-x64/publish/Client
+```
+
+**Create distributable archive**:
+```bash
+cd bin/Release/net9.0/linux-x64/publish/
+tar -czf ChatHub-Client-linux-x64.tar.gz *
+```
+
+### For Windows (64-bit)
+
+**Self-contained executable** (includes .NET runtime, larger file):
+```bash
+dotnet publish -c Release -r win-x64 --self-contained
+```
+
+**Single-file executable**:
+```bash
+dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
+```
+
+**Framework-dependent** (requires .NET 9.0 installed, smaller file):
+```bash
+dotnet publish -c Release -r win-x64 --no-self-contained
+```
+
+📁 Output location: `bin\Release\net9.0\win-x64\publish\Client.exe`
+
+**Run the executable**:
+```cmd
+bin\Release\net9.0\win-x64\publish\Client.exe
+```
+
+**Create distributable archive** (PowerShell):
+```powershell
+cd bin\Release\net9.0\win-x64\publish\
+Compress-Archive -Path * -DestinationPath ChatHub-Client-win-x64.zip
+```
+
+### Platform Options Summary
+
+| Platform | Runtime Identifier | Executable Name |
+|----------|-------------------|-----------------|
+| Windows 64-bit | `win-x64` | `Client.exe` |
+| Linux 64-bit | `linux-x64` | `Client` |
+
+### Build Options Explained
+
+- **`--self-contained`**: Includes .NET runtime (larger file, works without .NET installed)
+- **`--no-self-contained`**: Requires .NET 9.0 runtime installed (smaller file)
+- **`-p:PublishSingleFile=true`**: Creates a single executable file (recommended for distribution)
+- **`-c Release`**: Optimized release build
+
 ## 📖 How to Use
 
 ### First Time Users
@@ -51,7 +128,7 @@ A Simple real-time chat application client built with Avalonia UI and SignalR.
 1. **Registration**:
    - Launch the application
    - Enter a unique username
-   - Enter a password
+   - Enter a password (minimum 6 characters)
    - Click the **Register** button
    - Wait for the success message: "Registration successful! You can now login."
 
@@ -97,12 +174,12 @@ public static class SharedHttpClient
 
 ## 📦 Dependencies
 
-- **Avalonia**: Cross-platform UI framework
-- **Microsoft.AspNetCore.SignalR.Client**: Real-time communication
+- **Avalonia**: Cross-platform UI framework (v11.3.6)
+- **Microsoft.AspNetCore.SignalR.Client**: Real-time communication (v9.0.10)
 
 Install dependencies:
 ```bash
-dotnet add package Microsoft.AspNetCore.SignalR.Client
+dotnet restore
 ```
 
 ## 🐛 Troubleshooting
@@ -119,6 +196,23 @@ dotnet add package Microsoft.AspNetCore.SignalR.Client
 ### "Invalid credentials"
 - Double-check your username and password
 - Usernames and passwords are case-sensitive
+
+### "Password must be at least 6 characters long"
+- Enter a password with minimum 6 characters during registration
+
+### Executable doesn't run (Linux)
+- Make the file executable:
+  ```bash
+  chmod +x Client
+  ```
+- If using `--no-self-contained`, ensure .NET 9.0 runtime is installed:
+  ```bash
+  dotnet --version
+  ```
+
+### Executable doesn't run (Windows)
+- If using `--no-self-contained`, install [.NET 9.0 Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)
+- Check Windows Defender or antivirus settings
 
 ## 👤 Author
 
