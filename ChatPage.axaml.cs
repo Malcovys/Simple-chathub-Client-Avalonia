@@ -15,7 +15,7 @@ namespace Client;
 public partial class ChatPage : UserControl
 {  
     private record class User(int? Id, string Name);
-    private record class Message(int UserId, string Content);
+    private record class Message(int UserId, string Username, string Content);
 
     private HubConnection? _connection;
     private readonly HttpClient _httpClient = SharedHttpClient.client;
@@ -60,12 +60,12 @@ public partial class ChatPage : UserControl
     private async Task LoadOldMessages()
     {
         await GetAllFromJsonMessages();
+        PushNotification("You are online.");
     }
 
     private void PushMessage(Message message)
     {
-        var sender = _connectedUsers.FirstOrDefault(u => u.Id == message.UserId);
-        var displayName = sender != null ? sender.Name : message.UserId.ToString();
+        var displayName =  message.Username;
         Dispatcher.UIThread.Post(() => MessagesList.Items.Add($"{displayName}: {message.Content}."));
     }
 
@@ -114,15 +114,28 @@ public partial class ChatPage : UserControl
         Dispatcher.UIThread.Post(() => PushNotification($"{user.Name} is connected."));
     }
     
-    private void OnHasUserDesconnected(int userId)
+    private void OnHasUserDesconnected(User user)
     {
-        var disconnectedUser = _connectedUsers.FirstOrDefault((usr) => usr.Id == userId);
+        var disconnectedUser = _connectedUsers.FirstOrDefault((usr) => usr.Id == user.Id);
 
         if (disconnectedUser is null)
             return;
-            
+
         _connectedUsers.Remove(disconnectedUser);
-        Dispatcher.UIThread.Post(() => PushNotification($"{disconnectedUser.Name} has been disconnected."));
+        
+        // Remove from UI
+        Dispatcher.UIThread.Post(() => 
+        {
+            var itemToRemove = UsersList.Items.Cast<string>()
+                .FirstOrDefault(item => item.Contains($"(ID: {user.Id})"));
+            
+            if (itemToRemove != null)
+            {
+                UsersList.Items.Remove(itemToRemove);
+            }
+            
+            PushNotification($"{disconnectedUser.Name} has been disconnected.");
+        });
     }
 
     private async Task PostMessageAsJson(string content)
@@ -141,9 +154,8 @@ public partial class ChatPage : UserControl
         {   
             foreach (var message in messages)
             {
-                var sender = _connectedUsers.FirstOrDefault(u => u.Id == message.UserId);
-                var displayName = sender != null ? sender.Name : message.UserId.ToString();   
-                MessagesList.Items.Add($"{displayName}: {message.Content}.");
+                var sender = message.Username; 
+                MessagesList.Items.Add($"{sender}: {message.Content}.");
             }
         }
     }
@@ -170,20 +182,31 @@ public partial class ChatPage : UserControl
                 .WithUrl($"http://localhost:3000/ChatHub?userId={_userId}")
                 .Build();
 
-            _connection.On<Message>("ReceiveMessage", OnReceiveMessage);
+            _connection.On<int, string, string>("ReceiveMessage", (userId, userName, content) =>
+            {
+                if (userId == _userId) return;
+                var message = new Message(userId, userName, content);
+                OnReceiveMessage(message);
+            });
 
-            _connection.On<User>("UserConnected", OnNewUserConnected);
+            _connection.On<int, string>("UserConnected", (id, name) =>
+            {
+                if (id == _userId) return;
+                var user = new User(id, name);
+                OnNewUserConnected(user);
+            });
 
-            _connection.On<int>("UserDisconnected", OnHasUserDesconnected);
+            _connection.On<int, string>("UserDisconnected", (id, name) => 
+            {
+                var user = new User(id, name);
+                OnHasUserDesconnected(user);
+            });
 
             await _connection.StartAsync();
-
-            PushNotification("You are online.");
         }
         catch (Exception ex)
         {
             PushNotification($"❌ Connection error: {ex.Message}.");
-
             Debug.WriteLine($"Exception type: {ex.GetType().Name}");
             Debug.WriteLine($"Full exception: {ex}");
         }
