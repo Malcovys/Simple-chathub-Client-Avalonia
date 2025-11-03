@@ -218,4 +218,4 @@ dotnet restore
 
 **Malcovys**
 - GitHub: [@Malcovys](https://github.com/Malcovys)
-- Repository: [Simple-chathub-Client-Avalonia](https://github.com/Malcovys/Simple-chathub-Client-Avalonia)
+- Repository: [Simple-chathub-ASP.NET-Core-Api](https://github.com/Malcovys/Simple-chathub-ASP.NET-Core-Api)
