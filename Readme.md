@@ -10,10 +10,15 @@ A Simple real-time chat application client built with Avalonia UI and SignalR.
 - **Message History**: View previous messages when joining the chat
 - **Cross-platform**: Works on Windows and Linux
 
+## 🔗 Related Projects
+
+**Server API**: [Simple-chathub-ASP.NET-Core-Api](https://github.com/Malcovys/Simple-chathub-ASP.NET-Core-Api) - Backend server built with ASP.NET Core
+
 ## 📋 Prerequisites
 
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or later
 - A running ChatHub server (default: `http://localhost:3000`)
+  - Get the server from: [Simple-chathub-ASP.NET-Core-Api](https://github.com/Malcovys/Simple-chathub-ASP.NET-Core-Api)
 
 ## 🛠️ Installation
 
@@ -36,6 +41,7 @@ A Simple real-time chat application client built with Avalonia UI and SignalR.
 ## ▶️ Running the Application
 
 1. **Start the ChatHub server** (if not already running):
+   - Clone and run the server: [Simple-chathub-ASP.NET-Core-Api](https://github.com/Malcovys/Simple-chathub-ASP.NET-Core-Api)
    - Ensure the server is running on `http://localhost:3000`
    - Update `SharedHttpClient.cs` if your server uses a different URL
 
@@ -218,4 +224,4 @@ dotnet restore
 
 **Malcovys**
 - GitHub: [@Malcovys](https://github.com/Malcovys)
-- Repository: [Simple-chathub-ASP.NET-Core-Api](https://github.com/Malcovys/Simple-chathub-ASP.NET-Core-Api)
+- Repository: [Simple-chathub-Client-Avalonia](https://github.com/Malcovys/Simple-chathub-Client-Avalonia)
